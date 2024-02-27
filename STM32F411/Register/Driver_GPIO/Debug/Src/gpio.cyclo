@@ -1,0 +1,4 @@
+../Src/gpio.c:10:6:GPIO_OUTPUT_Init	4
+../Src/gpio.c:25:6:GPIO_INPUT_Init	4
+../Src/gpio.c:39:9:GPIO_Read_Pin	1
+../Src/gpio.c:46:6:GPIO_Write_Pin	2
