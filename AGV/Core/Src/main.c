@@ -99,6 +99,7 @@ void follow_line(){
     }
 		
 }
+//Ham PD dieu khien vi tri
 void PD_Control(){
 	Speedchange=Kp*err+Kd*(err-err_p);
 	if(Speedchange>100) Speedchange=100;
