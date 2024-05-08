@@ -27,32 +27,7 @@ int Kp=40,Kd=40,stop=0;
 int16_t Speedchange;
 uint8_t Basespeedleft=100,Basespeedright=100,leftspeed,rightspeed;
 
-void PD_Control(){
-	Speedchange=Kp*err+Kd*(err-err_p);
-	if(Speedchange>100) Speedchange=100;
-	else if(Speedchange<-100) Speedchange=-100;
-	else{}
-	
-	if(err>0){
-		leftspeed=(uint8_t)(Basespeedright-Speedchange);
-		rightspeed=(uint8_t)(Basespeedleft);
-	}
-	else if(err<0){
-		leftspeed=(uint8_t)Basespeedright;
-		rightspeed=(uint8_t)(Basespeedleft+Speedchange);
-	}
-	else{
-		leftspeed=100;
-		rightspeed=100;
-	}
-	if(stop==1){
-		leftspeed=0;
-		rightspeed=0;
-	}
-	TIM1->CCR1=leftspeed;
-	TIM1->CCR2=rightspeed;
-	err_p=err;
-}
+
 //Ham do line
 void follow_line(){
    uint8_t i=0;
@@ -123,6 +98,32 @@ void follow_line(){
 			
     }
 		
+}
+void PD_Control(){
+	Speedchange=Kp*err+Kd*(err-err_p);
+	if(Speedchange>100) Speedchange=100;
+	else if(Speedchange<-100) Speedchange=-100;
+	else{}
+	
+	if(err>0){
+		leftspeed=(uint8_t)(Basespeedright-Speedchange);
+		rightspeed=(uint8_t)(Basespeedleft);
+	}
+	else if(err<0){
+		leftspeed=(uint8_t)Basespeedright;
+		rightspeed=(uint8_t)(Basespeedleft+Speedchange);
+	}
+	else{
+		leftspeed=100;
+		rightspeed=100;
+	}
+	if(stop==1){
+		leftspeed=0;
+		rightspeed=0;
+	}
+	TIM1->CCR1=leftspeed;
+	TIM1->CCR2=rightspeed;
+	err_p=err;
 }
 
 //Thiet lap cau H
