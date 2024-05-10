@@ -1,67 +1,19 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2024 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
 TIM_HandleTypeDef htim1;
 DMA_HandleTypeDef hdma_tim1_ch1_ch2_ch3;
 
-/* USER CODE BEGIN PV */
 
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM1_Init(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
 uint16_t data[5];
 uint16_t average_sensor[5]={1961,1958,1959,1957,1959};
 uint16_t digital[5];
@@ -122,7 +74,6 @@ void follow_line(){
 			//11110
 			case 16:
 				err=4;
-				stop=0;
 			break;
 			//00000
 			case 31:
@@ -138,6 +89,7 @@ void follow_line(){
 
 //Ham PD dieu khien vi tri
 void PD_Control(){
+	
 	Speedchange=Kp*err+Kd*(err-err_p);
 	if(Speedchange>100) Speedchange=100;
 	else if(Speedchange<-100) Speedchange=-100;
@@ -172,75 +124,38 @@ void tien(){
 	HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,1);
 }
 
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
   MX_TIM1_Init();
-  /* USER CODE BEGIN 2 */
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)data, 5);
-	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_2);
 	
-	time=HAL_GetTick();
-	tien();
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)data, 5);
+  HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_2);
+	
+  time=HAL_GetTick();
+  tien();
 
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-		if(HAL_GetTick()-time>1){
-			follow_line();
-			PD_Control();
-		}
+   if(HAL_GetTick()-time>1){
+	follow_line();
+	PD_Control();
+     }
   }
-  /* USER CODE END 3 */
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Configure the main internal regulator output voltage
-  */
+
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
@@ -386,7 +301,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 719;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 299;
+  htim1.Init.Period = 99;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
