@@ -14,6 +14,7 @@ static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM1_Init(void);
 
+//khai báo các biến
 uint16_t data[5];
 uint16_t average_sensor[5]={1961,1958,1959,1957,1959};
 uint16_t digital[5];
@@ -24,9 +25,7 @@ int16_t Speedchange;
 uint8_t Basespeedleft=100,Basespeedright=100,leftspeed,rightspeed;
 uint32_t time;
 
-
-
-
+//Hàm dò lineline
 void follow_line(){
 	 uint8_t i=0;
 	 for (i = 0; i < 5; i++ )
@@ -132,16 +131,17 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   MX_TIM1_Init();
-	
+  //Bat ADC,PWM
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)data, 5);
   HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_2);
-	
+
   time=HAL_GetTick();
   tien();
 
   while (1)
   {
+   //1 tick lấy mẫu 1 lần
    if(HAL_GetTick()-time>1){
 	follow_line();
 	PD_Control();
