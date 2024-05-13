@@ -1,45 +1,7 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2024 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
+
 #include "main.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
@@ -48,23 +10,14 @@ DMA_HandleTypeDef hdma_tim1_ch1_ch2_ch3;
 
 UART_HandleTypeDef huart6;
 
-/* USER CODE BEGIN PV */
 
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_USART6_UART_Init(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
 uint16_t data[5];
 uint16_t average_sensor[5]={1961,1958,1959,1957,1959};
 uint16_t digital[5];
@@ -78,7 +31,7 @@ int count=0;
 int a;
 char rxbuffer[1];
 
-
+//Nut Nhan PA0 Chon mode Do line hoac Dieu khien
 void EXTI0_IRQHandler(void)
 {
   
@@ -92,7 +45,7 @@ void EXTI0_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
 
 }
-
+//Ham do line
 void follow_line(){
 	 uint8_t i=0;
 	 for (i = 0; i < 5; i++ )
@@ -196,95 +149,66 @@ void lui(){
 	HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,1);
 }
 
-/* USER CODE END 0 */
 
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
   MX_TIM1_Init();
   MX_USART6_UART_Init();
-  /* USER CODE BEGIN 2 */
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)data, 5);
-	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_2);
+ 
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)data, 5);
+  HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_2);
 	
-	time=HAL_GetTick();
-	tien();
+  time=HAL_GetTick();
+  tien();
 
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
-		while(a==0){
-			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,1);
-			if(HAL_GetTick()-time>1){
-				follow_line();
-				PD_Control();
-			}
+	while(a==0){
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,1);
+		if(HAL_GetTick()-time>1){
+			follow_line();
+			PD_Control();
 		}
-		while(a==1){
-			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,0);
-			HAL_UART_Receive(&huart6, (uint8_t*)rxbuffer, 1,1000);
+	}
+	  
+	while(a==1){
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,0);
+		HAL_UART_Receive(&huart6, (uint8_t*)rxbuffer, 1,1000);
 			
-			if(*rxbuffer=='S'){
-				TIM1->CCR1=0;
-				TIM1->CCR2=0;
-			}
-			if(*rxbuffer=='F'){
-				tien();
-				TIM1->CCR1=100;
-				TIM1->CCR2=100;
-			}
-			if(*rxbuffer=='B'){
-				lui();
-				TIM1->CCR1=100;
-				TIM1->CCR2=100;
-			}
-			if(*rxbuffer=='L'){
-				tien();
-				TIM1->CCR1=100;
-				TIM1->CCR2=0;
-			}
-			if(*rxbuffer=='R'){
-				tien();
-				TIM1->CCR1=0;
-				TIM1->CCR2=100;
-			}
+		if(*rxbuffer=='S'){
+			TIM1->CCR1=0;
+			TIM1->CCR2=0;
 		}
+		if(*rxbuffer=='F'){
+			tien();
+			TIM1->CCR1=99;
+			TIM1->CCR2=99;
+		}
+		if(*rxbuffer=='B'){
+			lui();
+			TIM1->CCR1=99;
+			TIM1->CCR2=99;
+		}
+		if(*rxbuffer=='L'){
+			tien();
+			TIM1->CCR1=99;
+			TIM1->CCR2=0;
+		}
+		if(*rxbuffer=='R'){
+			tien();
+			TIM1->CCR1=0;
+			TIM1->CCR2=99;
+		}
+	}
   }
-  /* USER CODE END 3 */
 }
 
 /**
@@ -443,7 +367,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 719;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 99;
+  htim1.Init.Period = 100;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
