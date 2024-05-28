@@ -171,7 +171,7 @@ int main(void)
   {
    
 		while(mode==0){
-			//Thoi gian lay mau = 1 tick
+			//Thoi gian lay mau = 1 ms
 			if(HAL_GetTick()-time>1){
 				follow_line();
 				PD_Control();
